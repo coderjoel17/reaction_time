@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditory Reaction Time Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background:linear-gradient(135deg, #85B2DB, #A99EE5);
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+        }
+        .reaction-time {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Auditory Reaction Time Test</h1>
+    <p>Press SPACE as soon as you hear the sound</p>
+    <button id="startButton" onclick="startTest()">Start</button>
+    <div class="reaction-time" id="reactionTime"></div>
+
+    <audio id="audio" src="C:\xampp\htdocs\simple_website\pages\sound\buzz.wav"></audio>
+
+<script>
+    let startTime, waitingForReaction = false;
+
+    document.addEventListener('keydown', function(event) {
+        if (event.code === 'Space' && waitingForReaction) {
+            recordReactionTime();
+        }
+    });
+
+    function startTest() {
+        document.getElementById('startButton').disabled = true;
+        document.getElementById('reactionTime').textContent = '';
+
+        // Countdown starts
+        let countdownValue = 3;
+        const countdownInterval = setInterval(() => {
+            document.getElementById('reactionTime').textContent = countdownValue;
+            countdownValue--;
+
+            if (countdownValue < 0) {
+                clearInterval(countdownInterval);
+                triggerSignal();
+            }
+        }, 1000);
+    }
+
+    function triggerSignal() {
+        document.getElementById('reactionTime').textContent = '';
+
+        // Random delay between 0-6 seconds
+        setTimeout(playAudio, Math.random() * 6000);
+    }
+
+    function playAudio() {
+        const audio = document.getElementById('audio');
+        audio.play(); // Play sound
+        startTime = Date.now();
+        waitingForReaction = true;
+    }
+
+    function recordReactionTime() {
+        const reactionTime = (Date.now() - startTime) / 1000;
+        document.getElementById('reactionTime').textContent = `Reaction Time: ${reactionTime.toFixed(3)} seconds`;
+        waitingForReaction = false;
+        document.getElementById('startButton').disabled = false;
+    }
+</script>
+
+</body>
+</html>
